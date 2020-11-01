@@ -34,8 +34,8 @@ sub decrypt_file {
 
 
 sub compute_tag {
-	my ($k2, $iv, $cipher) = @_;
-	`cat $iv $cipher | openssl dgst -binary -sha256 -hmac $k2 > tag.bin`
+	my ($k2, $iv, $cipher, $file) = @_;
+	`cat $iv $cipher | openssl dgst -binary -sha256 -hmac $k2 > $file`
 }
 
 1;
