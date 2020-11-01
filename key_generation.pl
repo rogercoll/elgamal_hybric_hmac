@@ -2,6 +2,10 @@
 use strict;
 use warnings;
 
+sub hello {
+	return "hello";
+}
+
 sub create_params {
 	my $file_name = shift;
 	print "Generating DH parameters file...\n";	
@@ -18,6 +22,5 @@ sub create_keypair {
 	`openssl pkey -in $keyName -pubout -out $pubName`;
 }
 
-create_params("params.pem");
-create_keypair("alice", "params.pem");
-create_keypair("eph", "params.pem");
+
+1;

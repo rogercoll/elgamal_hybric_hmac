@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+###!/usr/bin/perl
 use strict;
 use warnings;
 
@@ -27,13 +27,15 @@ sub encrypt_file {
 	`openssl enc -aes-128-cbc -K $k1 -iv $iv -in $file -out ciphertext.bin`;
 }
 
+sub decrypt_file {
+	my ($k1, $iv, $file) = @_;
+	`openssl enc -d -aes-128-cbc -K $k1 -iv $iv -in $file -out decrypted.bin`;
+}
+
+
 sub compute_tag {
 	my ($k2, $iv, $cipher) = @_;
 	`cat $iv $cipher | openssl dgst -binary -sha256 -hmac $k2 > tag.bin`
 }
 
-
-common_secret("alice_pubkey.pem", "eph_pkey.pem", "common.bin");
-my ($k1, $k2) = extract_secure_key("common.bin");
-encrypt_file($k1, "data_to_encript.txt");
-compute_tag($k2, "iv.bin", "ciphertext.bin");
+1;
