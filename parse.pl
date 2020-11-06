@@ -31,9 +31,9 @@ sub parse {
   split_after == 1 {n++;split_after=0}
   /-----END/ {split_after=1}
   {print > "decrypt/cert" n ".pem"}' < $file`;
-  	my $cipher = `tail -n +2 decrypt/cert1.pem | head -n -1 | base64 -d`;
-  	my $iv = `tail -n +2 decrypt/cert2.pem | head -n -1 | base64 -d`;
-  	my $tag = `tail -n +2 decrypt/cert3.pem | head -n -1 | base64 -d`;
+  	my $cipher = `tail -n +2 decrypt/cert2.pem | head -n -1 | openssl base64 -d`;
+  	my $iv = `tail -n +2 decrypt/cert1.pem | head -n -1 | openssl base64 -d`;
+  	my $tag = `tail -n +2 decrypt/cert3.pem | head -n -1 | openssl base64 -d`;
 	open(FH, '>', "decrypt/ciphertext.bin") or die $!;
 	print FH $cipher;
 	open(FH, '>', "decrypt/iv.bin") or die $!;
@@ -45,7 +45,7 @@ sub parse {
 
 my $file = $ARGV[0];
 if (defined $file) {
-	parse("final.pem");
+	parse($file);
 } else {
 	generate_pem("eph_pubkey.pem", "ciphertext.bin", "iv.bin", "tag.bin", "final.pem");
 }

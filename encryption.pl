@@ -6,7 +6,8 @@ use warnings;
 sub common_secret {
 	my ($pub,$priv,$common_file) = @_;
 	print "Deriving common secret using $pub as the long-term public key and $priv as the ephemeral private key\n";
- 	`openssl pkeyutl -inkey $priv -peerkey $pub -derive -out $common_file | openssl dgst -sha256 -binary > comm.bin`;
+ 	`openssl pkeyutl -inkey $priv -peerkey $pub -derive -out $common_file`;
+       	`cat $common_file | openssl dgst -sha256 -binary > comm.bin`;
 }
 
 sub extract_secure_key {
@@ -20,7 +21,7 @@ sub extract_secure_key {
 
 sub encrypt_file {
 	my ($k1,$file) = @_;
-	my $iv = `openssl rand -hex 16`;
+	my $iv = `openssl rand 16`;
 	chomp($iv);
 	open(FH, '>', "iv.bin") or die $!;
 	print FH $iv;
@@ -35,7 +36,7 @@ sub decrypt_file {
 
 sub compute_tag {
 	my ($k2, $iv, $cipher, $file) = @_;
-	`cat $iv $cipher | openssl dgst -binary -sha256 -hmac $k2 > $file`
+	`cat $iv $cipher | openssl dgst -binary -sha256 -mac hmac -macopt hexkey:$k2 > $file`
 }
 
 1;
